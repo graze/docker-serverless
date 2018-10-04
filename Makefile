@@ -25,5 +25,5 @@ test-%: ## Test a version
 		-v $$(pwd):/app -v /var/run/docker.sock:/var/run/docker.sock \
 		graze/bats tests.bats
 
-release-$*: ## Release a new version
+release-%: ## Release a new version
 	${MAKE} build-$* test-$* && git tag $* && git push $*
