@@ -1,8 +1,5 @@
-SHELL = /bin/bash
-
-docker_bats := docker run --rm \
-		-v $$(pwd):/app -v /var/run/docker.sock:/var/run/docker.sock \
-		graze/bats
+build_args := --build-arg BUILD_DATE=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ") \
+              --build-arg VCS_REF=$(shell git rev-parse --short HEAD)
 
 .PHONY: build build-quick
 .PHONY: tag
@@ -16,7 +13,7 @@ build-quick:
 build-%: cache ?= --no-cache
 build-%: pull ?= --pull
 build-%: ## build a generic image
-	docker build ${cache} ${pull} --build-arg VERSION=$* -t graze/serverless:$* .
+	docker build ${build_args} ${cache} ${pull} --build-arg VERSION=$* -t graze/serverless:$* .
 
 clean-%: ## Clean up the images
 	docker rmi $$(docker images -q graze/serverless:$**) || echo "no images"
@@ -27,3 +24,6 @@ test-%: ## Test a version
 		-e VERSION=$* \
 		-v $$(pwd):/app -v /var/run/docker.sock:/var/run/docker.sock \
 		graze/bats tests.bats
+
+release-$*: ## Release a new version
+	${MAKE} build-$* test-$* && git tag $* && git push $*

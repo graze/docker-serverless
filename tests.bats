@@ -3,7 +3,7 @@
 readonly container="graze/serverless:${VERSION:?1.32.0}"
 
 @test "alpine version is the correct" {
-  run docker run --rm --entrypoint=/bin/sh ${container} -c 'cat /etc/alpine-version'
+  run docker run --rm --entrypoint=/bin/sh ${container} -c 'cat /etc/alpine-release'
   echo 'status:' $status
   echo 'output:' $output
   echo 'version:' $version
@@ -15,9 +15,10 @@ readonly container="graze/serverless:${VERSION:?1.32.0}"
   run docker run --rm ${container} --version
   echo 'status:' $status
   echo 'output:' $output
-  echo 'version:' $version
   [ "$status" -eq 0 ]
-  [[ "$output" == "1.32.0" ]]
+  if [ "${VERSION:?1.32.0}" != "latest" ]; then
+    [[ "$output" == "${VERSION:?1.32.0}" ]]
+  fi
 }
 
 @test "the image has a MIT license" {
