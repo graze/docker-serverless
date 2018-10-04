@@ -26,4 +26,4 @@ test-%: ## Test a version
 		graze/bats tests.bats
 
 release-%: ## Release a new version
-	${MAKE} build-$* test-$* && git tag $* && git push $*
+	${MAKE} build-$* test-$* && git tag $* && git push --tags
