@@ -1,6 +1,6 @@
 FROM node:11.9-alpine
 
-ARG VERSION=1.37.0
+ARG VERSION=1.37.1
 
 RUN yarn global add serverless@${VERSION}
 
